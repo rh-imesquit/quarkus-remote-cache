@@ -1,0 +1,14 @@
+apiVersion: infinispan.org/v1
+kind: Infinispan
+metadata:
+  name: infinispan
+spec:
+  replicas: 3
+  service:
+    type: DataGrid
+  expose:
+    type: Route
+    host: console-dg.apps.cluster-g6kn4.g6kn4.sandbox1680.opentlc.com
+  security:
+    endpointEncryption:
+      type: None
