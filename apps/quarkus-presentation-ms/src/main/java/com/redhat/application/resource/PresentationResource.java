@@ -39,7 +39,7 @@ public class PresentationResource {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPresentationById(@PathParam("id") Long id) {
+    public Response getPresentationById(@PathParam("id") Long id) throws InterruptedException {
         Presentation presentation = service.findPresentationById(id);
 
         if (presentation == null) {
