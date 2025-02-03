@@ -14,8 +14,6 @@ Esse laboratório foi executado com as seguintes espeificações:
 
 Antes de começar, é necessário ter acesso ao OpenShift, pois todo o laboratório será realizado por meio dele. O usuário deverá estar devidamente autenticado.
 
-Faça o login pelo oc cli também.
-
 
 ## Provisionando a infraestrutura necessária
 
@@ -27,11 +25,11 @@ Vamos começar criando dois projetos no OpenShift para criar uma camada de isola
 
 Após criar esse projeto, vamos instalar o operator do Red Hat Data Grid. Na perspectiva Administrador, acesse o menu lateral esquerdo Operators e clique em OperatorHub. Na barra de busca, procure por Red Hat Data Grid.
 
-![Imagem operator Data Grid](/images/operator-data-grid.png)
+![Instalação do operator Data Grid](/images/operator-data-grid.png)
 
 Mantenha as configurações padrão e clique no botão Install. Após finalizar a instalação, clique no botão View Operator para acessar a tela do operator.
 
-![Imagem operator Data Grid](/images/operator-data-grid-details.png)
+![Detalhes do operator Data Grid](/images/operator-data-grid-details.png)
 
 
 Em seguida vamos criar as instâncias necessárias usando os yamls disponibilizados nesse repositório [aqui](/infra/openshift/data-grid/).
@@ -80,23 +78,25 @@ Na perspectiva Developer, vamos usar uma solução de template já definida para
 
 Dentre as opções apresentadas, escolha Database dentro do painel Developer Catalog.
 
-[Imagem +Add]
+![Painel +Add](/images/developer-perspective-add.png)
 
 Vamos escolher a opção MySQL - Provided by Red Hat, Inc. Clique no botão "Instantiate Template"
 
-[Imagem Database]
+![Banco de dados MySQL](/images/mysql-db-install.png)
 
 No formulário, precisamos definir alguns parâmetros para a configuração do banco. Segue abaixo a relação de parâmetro e valor a ser ajustado:
 
+| Parameter | Value |
+| ----- | ----- |
 |MySQL Connection Username |Defina o nome que achar mais adequado|
 |MySQL Connection Password | Defina a senha que achar mais adequada|
 |MySQL root user Password |Defina a senha que achar mais adequada|
 |MySQL Database Name| presentation_db|
 |Version of MySQL Image | 8.0-el7|
-|Clique no botão create|
+|**Clique no botão create**|
 
-[Imagem form database]
+![Formulário do banco de dados MySQL](/images/mysql-db-form.png)
 
-Esse processo é rápido, ainda que esteja criando recursos como StatefullSet, Secrets e ConfigMaps. Como resultado devemos ver o pod em status Running (argola azul)
+Esse processo pode levar alguns poucos minutos para concluir. Como resultado devemos ver o pod em status Running (círculo azul)
 
-[Imagem pod criado]
+![Pod do MySQL 8](/images/mysql-pod.png)
