@@ -1,7 +1,14 @@
 # Red Hat Data Grid and Quarkus lab
 
+Cache is a temporary storage mechanism for frequently accessed data, used to reduce response time and improve application performance. It prevents repeated access to slower data sources, such as databases or external APIs.
 
+With this in mind, many vendors develop solutions to meet these specific needs. Red Hat provides Data Grid, which is based on the open-source Infinispan project.
 
+Red Hat Data Grid (RHDG) is a distributed, in-memory NoSQL solution based on the open-source Infinispan project. It enables applications to store, access, process, and analyze data at high speed, using RAM to reduce latency and improve performance.
+
+This approach allows for faster responses, ensuring a superior user experience, making it ideal for applications that require low response time and high scalability.
+
+Let's apply a basic and simple lab to practice using this technology.
 
 ## Technologies Used
 
@@ -263,3 +270,10 @@ Go to the *Data Grid panel* and check that the entry has been recorded in the ca
 ![Cache populated with the record](/images/cache-populated.png)
 
 Great job! We have completed our lab.
+
+
+## References
+
+- [Red Hat Data Grid 8.5 Oficial Documentation](https://docs.redhat.com/en/documentation/red_hat_data_grid/8.5/)
+- [Quarkus Documentation - Using the Infinispan Client](https://quarkus.io/guides/infinispan-client)
+- [Infinispan Project Website](https://infinispan.org/)
