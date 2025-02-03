@@ -19,7 +19,7 @@ This lab was executed with the following specifications:
 - MySQL 8.0
 - Quarkus 3.18.1 (Java 17)
 
-## Pré Prerequisites
+## Prerequisites
 
 Before starting, it is necessary to have access to OpenShift, as the entire lab will be conducted through it. 
 The user must be properly authenticated.
