@@ -3,6 +3,8 @@ package com.redhat.domain.model;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+import org.infinispan.protostream.annotations.ProtoFactory;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Presentation implements Serializable {
@@ -24,6 +26,7 @@ public class Presentation implements Serializable {
 
     }
 
+    @ProtoFactory
     public Presentation(Long id, String author, String theme, LocalDateTime dateTime) {
         this.id = id;
         this.author = author;
