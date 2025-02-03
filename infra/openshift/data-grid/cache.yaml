@@ -9,12 +9,17 @@ spec:
     distributedCache:
       mode: "SYNC"
       owners: "1"
-      statistics: "true"
+      statistics: "false"
       encoding:
         mediaType: "application/x-protostream"
       persistence:
         fileStore: ~
       expiration:
-        lifespan: "3600000"  # Tempo de vida do cache em milissegundos (1h)
+        lifespan: "1800000"
       memory:
         maxSize: "500MB" 
+      transaction:
+        mode: "NONE"
+      stateTransfer:
+        timeout: "15000"
+        chunkSize: "1024"

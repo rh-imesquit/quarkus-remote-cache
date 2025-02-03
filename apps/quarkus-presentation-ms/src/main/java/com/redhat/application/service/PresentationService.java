@@ -35,7 +35,7 @@ public class PresentationService {
          return repository.deleteById(id);
     }
 
-    public void simulateHighLatency() throws InterruptedException {
+    private void simulateHighLatency() throws InterruptedException {
         Thread.sleep(8000);
     }
 }
