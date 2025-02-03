@@ -1,200 +1,206 @@
-# quarkus-remote-cache
+# Red Hat Data Grid and Quarkus lab
 
 
-## Tecnologias utilizadas
 
-Esse laboratório foi executado com as seguintes espeificações:
+
+## Technologies Used
+
+This lab was executed with the following specifications:
 
 - OpenShift 4.16
 - Red Hat Data Grid Operator 8.5.4
 - MySQL 8.0
 - Quarkus 3.18.1 (Java 17)
 
-## Pré Requisitos
+## Pré Prerequisites
 
-Antes de começar, é necessário ter acesso ao OpenShift, pois todo o laboratório será realizado por meio dele. O usuário deverá estar devidamente autenticado.
+Before starting, it is necessary to have access to OpenShift, as the entire lab will be conducted through it. 
+The user must be properly authenticated.
 
 
-## Provisionando a infraestrutura necessária
+## Provisioning the required infrastructure
 
-Vamos começar criando dois projetos no OpenShift para criar uma camada de isolamento lógico entre as partes da nossa solução.
+Let's start by creating two projects in OpenShift to establish a logical isolation layer between the parts of our solution.
 - remote-cache
 - application
 
-### Projeto remote-cache
+### Step 1: remote-cache project
 
-Após criar esse projeto, vamos instalar o operator do Red Hat Data Grid. Na perspectiva Administrador, acesse o menu lateral esquerdo Operators e clique em OperatorHub. Na barra de busca, procure por Red Hat Data Grid.
+After creating this project, we will install the Red Hat Data Grid operator. In the *Administrator* perspective, go to the left-side menu, select *Operators*, and click on *OperatorHub*. In the search bar, look for *Red Hat Data Grid*.
 
-![Instalação do operator Data Grid](/images/operator-data-grid.png)
+![Installing the Data Grid Operator](/images/operator-data-grid.png)
 
-Mantenha as configurações padrão e clique no botão Install. Após finalizar a instalação, clique no botão View Operator para acessar a tela do operator.
+Keep the default settings and click the *Install button*. Once the installation is complete, click the *View Operator button* to access the operator screen.
 
-![Detalhes do operator Data Grid](/images/operator-data-grid-details.png)
+![Details of the Data Grid Operator](/images/operator-data-grid-details.png)
 
 
-Em seguida vamos criar as instâncias necessárias usando os yamls disponibilizados nesse repositório [aqui](/infra/openshift/data-grid/).
+Next, we will create the necessary instances using the YAML files available in this repository [here](/infra/openshift/data-grid/).
 
-OBS.: No arquivo infinispan.yaml deve ser usada a rota do host do cluster OpenShift. 
+Note: In the infinispan.yaml file, the route of the OpenShift cluster host must be used.
 
-Por exemplo:
+For example:
 console-dg.<cluster-hostname>
 console-dg.apps.cluster-g6kn4.g6kn4.sandbox1680.opentlc.com
 
-Clique em Create Instance na opção Infinispan Cluster e cole o yaml correspondente (acesse aqui), e clique no botão Create.
+Click *Create Instance* under the Infinispan Cluster option, paste the contents of the infinispan.yaml file into the text box, and click the *Create button*.
 
-![Definição de yaml do infinispan](/images/infinispan-yaml.png)
+![Infinispan YAML Definition](/images/infinispan-yaml.png)
 
-Perceba que serão criados 2 pods para o cluster.
+Notice that two pods will be created for the cluster.
 
-![Pods do infinispan](/images/infinispan-pods.png)
+![Infinispan Pods](/images/infinispan-pods.png)
 
-O mesmo deve ser feito para a opção Cache.Cole o yaml correspondente (acesse aqui), e clique no botão Create.
+The same should be done for the Cache option. Paste the contents of the cache.yaml file into the text box and click the *Create button*.
 
-![Definição de yaml do cache](/images/cache-yaml.png)
+![Cache YAML Definition](/images/cache-yaml.png)
 
-Repare que temos 3 caches criados. Esse comportamento é normal, pois os caches memcached-cache e resp-cache são criados automaticamente pelo cluster infinispan. O importante é que eles estejam com o status Ready.
+Notice that three caches have been created. This behavior is normal, as the memcached-cache and resp-cache caches are automatically created by the Infinispan cluster. The important thing is that they are in the Ready status.
 
-![Pods do cache](/images/cache-pods.png)
+![Cache Pods](/images/cache-pods.png)
 
-Um ponto interessante é que será habilitada uma rota para acessar a console do Red Hat Data Grid. Vá para o menu lateral esquerdo e acesse Networking, e depois Routes. Por fim, clique no link Location da rota infinispan-external.
+An interesting point is that a route will be enabled to access the Red Hat Data Grid console. In the left-side menu, go to *Networking* and then *Routes*. Finally, click on the *Location link* for the infinispan-external route.
 
-A console irá pedir o usuário e senha de acesso. Essas credenciais se encontram em uma Secret chamada infinispan-generated-secret. Vá para o menu lateral esquerdo e acesse Workloads e depois Secrets.
+The console will ask for a username and password to access it. These credentials are stored in a *Secret* called *infinispan-generated-secret*. In the left-side menu, go to Workloads and then Secrets.
 
-Após informar as credenciais corretamente, clique no botão Open the console.
+After entering the correct credentials, click the *Open the console button*.
 
-![Tela de autenticação do Data Grid](/images/dg-console-auth.png)
+![Data Grid Authentication Screen](/images/dg-console-auth.png)
 
-![Painel do Data Grid](/images/dg-console-panel.png)
-
-
-Finalizamos essa etapa.
-
-### Projeto application
-
-#### Banco de dados
-
-Após criar esse projeto, vamos provisionar o nosso banco de dados, um MySQL.
-
-Na perspectiva Developer, vamos usar uma solução de template já definida para a criação do banco de dados. No menu lateral esquerdo, clique em +Add.
+![Data Grid Panel](/images/dg-console-panel.png)
 
 
-Dentre as opções apresentadas, escolha Database dentro do painel Developer Catalog.
+We have completed this step.
 
-![Painel +Add](/images/developer-perspective-add.png)
+### Step 2: application project
 
-Vamos escolher a opção MySQL - Provided by Red Hat, Inc. Clique no botão "Instantiate Template"
+#### Database
 
-![Banco de dados MySQL](/images/mysql-db-install.png)
+After creating this project, we will provision our MySQL database.
 
-No formulário, precisamos definir alguns parâmetros para a configuração do banco. Segue abaixo a relação de parâmetro e valor a ser ajustado:
+In the *Developer perspective*, we will use a predefined template to create the database. In the left-side menu, click *+Add*.
+
+Among the available options, select *Database* within the *Developer Catalog panel*.
+
+![+Add Panel](/images/developer-perspective-add.png)
+
+We will select the MySQL - Provided by Red Hat, Inc. option and click the *Instantiate Template button*.
+
+![MySQL Database](/images/mysql-db-install.png)
+
+In the form, we need to define some parameters for the database configuration. Below is the list of parameters and the values to be adjusted:
 
 | Parameter | Value |
 | ----- | ----- |
-|MySQL Connection Username |Defina o nome que achar mais adequado|
-|MySQL Connection Password | Defina a senha que achar mais adequada|
-|MySQL root user Password |Defina a senha que achar mais adequada|
-|MySQL Database Name| presentation_db|
-|Version of MySQL Image | 8.0-el7|
+| MySQL Connection Username | Choose the name you find most appropriate |
+| MySQL Connection Password | Choose the password you find most appropriate |
+| MySQL root user Password | Choose the password you find most appropriate. |
+| MySQL Database Name | presentation_db |
+| Version of MySQL Image | 8.0-el7|
 
-**Por fim, clique no botão create**
+**Finally, click the Create button.**
 
-![Formulário do banco de dados MySQL](/images/mysql-db-form.png)
+![MySQL Database Form](/images/mysql-db-form.png)
 
-Esse processo pode levar alguns poucos minutos para concluir. Como resultado devemos ver o pod em status Running (círculo azul)
+This process may take a few minutes to complete. As a result, we should see the pod in Running status (blue circle).
 
-![Pod do MySQL 8](/images/mysql-pod.png)
+![MySQL 8 Pod](/images/mysql-pod.png)
 
 
-#### Aplicações
+#### Aplications
 
-Vamos fazer o deploy das aplicações usando a estratégia Source to Image (S2I) do Red Hat OpenShift com base no nosso repositório Git.
+We will deploy the applications using the *Source to Image (S2I) strategy* of Red Hat OpenShift, based on our Git repository.
 
-Para começar, vamos faze o deploy do nosso microsserviço de apresentações. Na perspectiva Developer, acesse o menu lateral esquerdo, clique em +Add. 
+To begin, we will deploy our presentation microservice. In the *Developer perspective*, go to the left-side menu and click *+Add*.
 
-Dentre as opções apresentadas, escolha Import from Git dentro do painel Git Repository.
+Among the available options, select *Import from Git* within the Git Repository panel.
 
-Vamos preencher o formulário com os seguintes parâmetros:
+We will fill in the form with the following parameters:
 
-| Parâmetro | Value |
+| Parameter | Value |
 | ----- | ----- |
 | Git Repo URL | https://github.com/rh-imesquit/quarkus-remote-cache |
 | Context dir | /apps/quarkus-presentation-ms |
 | Application name | quarkus-presentation-ms |
 | Name | quarkus-presentation-ms |
 
-Na seção Deploy, clique no link "Show advanced Deployment option" e preencha as seguintes variáveis de ambiente
+In the Deploy section, click the *Show advanced Deployment options* link and fill in the following environment variables.
 
-| Environment Variable | Tipo | Value |
+| Environment Variable | Typo | Value |
 | ----- | ----- | ----- |
 | DB_NAME | Secret | mysql - database-name|
 | DB_USER | Secret | mysql - database-user|
 | DB_PASSWORD | Secret | mysql - database-password|
-| DB_HOST | Text | Hostname gerado para o service do MySQL |
+| DB_HOST | Text | The hostname generated for the MySQL Service |
 
-**Por fim, clique no botão create**
+**Finally, click the Create button.**
 
-![Importando o microsserviço de apresentações do git](/images/import-git-microservice.png)
+![Importing the presentation microservice from Git](/images/import-git-microservice.png)
 
-Como resultado devemos ver o pod da aplicação quarkus-presentation-ms em status Running (círculo azul)
+As a result, we should see the *quarkus-presentation-ms* application pod in *Running* status (blue circle).
 
-![Pod do microsserviço de apresentações](/images/presentation-microservice-running.png)
+![Presentation microservice pod](/images/presentation-microservice-running.png)
 
-Vamos fazer algumas requisições para ver se o serviço está funcionando de fato. Não esqueça de buscar a rota gerada para a aplicação no menu lateral Networking > Routes. No terminal do seu computador execute os seguintes comandos:
+Let's make some requests to check if the service is actually working. Don't forget to find the generated route for the application in the left-side menu *Networking*, and then *Routes*.
 
-```
-curl -X GET <Rota gerada para a aplicação >/presentation && echo
-```
-
-O resultado deve ser: *{"message": "There are no registered presentations"}*.
-
-Vamos inserir um registro na base desse microsserviço.
+In your computer's terminal, run the following commands:
 
 ```
-curl -X POST <Rota gerada para a aplicação>/presentation \
+curl -X GET <Generated route for the presentation microservice>/presentation && echo
+```
+
+The expected result is: *{"message": "There are no registered presentations"}*.
+
+Let's insert a record into this microservice's database.
+
+```
+curl -X POST <Generated route for the presentation microservice>/presentation \
      -H "Content-Type: application/json" \
      -d '{
-           "theme": "Quarkus e Red Hat Data Grid",
+           "theme": "Quarkus and Red Hat Data Grid",
            "author": "Ian Mesquita",
            "dateTime": "2025-02-07T16:00:00"
          }'  && echo
 ```
 
-O resultado deve ser: *{"id":1,"author":"Ian Mesquita","theme":"Quarkus e Red Hat Data Grid","dateTime":"2025-02-07T16:00:00"}*.
+The expected result is: *{"id":1,"author":"Ian Mesquita","theme":"Quarkus and Red Hat Data Grid","dateTime":"2025-02-07T16:00:00"}*.
 
-Nesse momento o registro está inserido no banco de dados.
+At this point, the record has been inserted into the database.
 
-Vamos buscar esse registro individualmente para observar um comportamento esperado.
+Now, let's retrieve this record individually to observe the expected behavior.
 
 ```
-curl -X GET <Rota gerada para a aplicação >/presentation/1 && echo
+curl -X GET <Generated route for the presentation microservice>/presentation/1 && echo
 ```
-O resultado deve ser: *{"id":1,"author":"Ian Mesquita","theme":"Quarkus e Red Hat Data Grid","dateTime":"2025-02-07T16:00:00"}*.
+The expected result is: *{"id":1,"author":"Ian Mesquita","theme":"Quarkus and Red Hat Data Grid","dateTime":"2025-02-07T16:00:00"}*.
 
-Note que o resultado demorou a aparecer, e está certo. É isso mesmo! Esse endpoint foi implementado para adicionar uma simulação de um backend que demora cerca de 8 segundos para responder.
+Notice that the result took a while to appear, and that's correct. This is the expected behavior! This endpoint was implemented to simulate a backend that takes approximately 8 seconds to respond.
 
-Vamos para a última parte desse laboratório.
+Now, let's move on to the final part of this lab.
 
-Agora seguindo o mesmo procedimento, vamos fazer o deploy do nosso microsserviço quarkus-infinispan-cache. Antes de mais nada, vamos criar uma secret com as credenciais de autenticação ao Infinispan. Na perspectiva Administrator, acesse o menu lateral Workloads e em seguida Secrets. Clique no botão Create e em seguida Key/Value secret.
+Following the same procedure, we will deploy the *quarkus-infinispan-cache microservice*. First, we need to create a *Secret* with the authentication credentials for Infinispan.
 
-![Criando a secret com credenciais do infinispan](/images/infinispan-secret-creation.png)
+In the *Administrator perspective*, go to the left-side menu *Workloads* and then *Secrets*. Click the *Create button* and select *Key/Value Secret*.
 
-Adicione 3 key/values options e os defina como o quadro abaixo:
+![Creating the Secret with Infinispan credentials](/images/infinispan-secret-creation.png)
 
-| Parâmetro | Value |
+Add three Key/Value options and set them as shown in the table below:
+
+| Parameter | Value |
 | ----- | ----- |
 | Secret name | infinispan |
 | Key 1 | cache-host |
-| Value 1 | <Host gerado para o Service do Infinispan (remote-cache project)> |
+| Value 1 | <Host generated for the Infinispan Service (remote-cache project)> |
 | Key 2 | cache-user |
-| Value 2 | <Usuário gerado no secret infinispan-generated-secret (remote-cache project)> |
+| Value 2 | <User generated in the Secret infinispan-generated-secret (remote-cache project)> |
 | Key 3 | cache-password |
-| Value 3 | <Senha gerada no secret infinispan-generated-secret (remote-cache project)> |
+| Value 3 | <Password generated in the Secret infinispan-generated-secret (remote-cache project)> |
 
-Na perspectiva Developer, acesse o menu lateral esquerdo, clique em +Add. 
+In the *Developer perspective*, go to the left-side menu and click *+Add*.
 
-Dentre as opções apresentadas, escolha Import from Git dentro do painel Git Repository.
+Among the available options, select *Import from Git* within the *Git Repository panel*.
 
-Vamos preencher o formulário com os seguintes parâmetros:
+Let's fill out the form with the following parameters:
 
 | Parâmetro | Value |
 | ----- | ----- |
@@ -203,54 +209,57 @@ Vamos preencher o formulário com os seguintes parâmetros:
 | Application name | quarkus-infinispan-cache |
 | Name | quarkus-infinispan-cache |
 
-Na seção Deploy, clique no link "Show advanced Deployment option" e preencha as seguintes variáveis de ambiente
+In the *Deploy section*, click the *Show advanced Deployment options* link and fill in the following environment variables.
 
-| Environment Variable | Tipo | Value |
+| Environment Variable | Type | Value |
 | ----- | ----- | ----- |
 | INFINISPAN_HOST | Secret | infinispan - cache-host|
 | INFINISPAN_USER | Secret | infinispan - cache-user|
 | INFINISPAN_PASSWORD | Secret | infinispan - cache-password|
-| API_PRESENTATION_URL | Text | Rota gerada para o microserviço quarkus-presentation-ms |
+| API_PRESENTATION_URL | Text | Generated route for the quarkus-presentation-ms microservice |
 
-**Por fim, clique no botão create**
+**Finally, click the Create button.**
 
-Como resultado devemos ver o pod da aplicação quarkus-infinispan-cache em status Running (círculo azul)
+As a result, we should see the *quarkus-infinispan-cache* application pod in *Running* status (blue circle).
 
-![Pod do microsserviço de cache](/images/presentation-cache- microservice-running.png)
+![Cache microservice pod](/images/presentation-cache-microservice-running.png)
 
-Vamos testar o conjunto, mas antes recupere a Rota criada para o microsseviço de cache no menu lateral Networking > Routes.
+Let's test the setup, but first, retrieve the route created for the cache microservice in the left-side menu *Networking* and then *Routes*.
 
-Primeiro, vamos testar o endpoint sem o cache e medir o tempo de resposta.
+First, let's test the endpoint without cache and measure the response time.
 
 ```
-time curl -X GET <Rota gerada para o microsserviço quarkus-infinispan-cache>/presentation/nocache/1 && echo
+time curl -X GET <Generated route for the quarkus-infinispan-cache microservice>/presentation/nocache/1 && echo
 ```
 
-O resultado deve ser algo aproximado a: *{"id":1,"author":"Ian Mesquita","theme":"Quarkus e Red Hat Data Grid","dateTime":"2025-02-07T16:00:00"}
+The result should be something close to: *{"id":1,"author":"Ian Mesquita","theme":"Quarkus and Red Hat Data Grid","dateTime":"2025-02-07T16:00:00"}
 real	0m9.013s
 user	0m0.015s
 sys	0m0.010s*.
 
-Exatamente como o esperado, o microsserviço de apresentações está lento.
+Exactly as expected, the presentation microservice is slow.
 
-Antes de seguir em frente, olhe no painel do console do Red Hat Data Grid que não temos entradas no cache presentations.
+Before moving forward, check in the Red Hat Data Grid console panel that there are no entries in the presentations cache.
 
-![Detalhes do cache presentation](/images/presentation-cache-details.png)
+![Presentation cache details](/images/presentation-cache-details.png)
 
-Agora, vamos usar o endpoint com o cache infinispan implementado. A primeira execução irá demorar pois a entrada ainda não está no cache, como vimos. Mas nas próximas execuções, o tempo cairá consideravelmente. 
+Now, let's use the endpoint with the implemented Infinispan cache.
+
+The first execution will take longer because the entry is not yet in the cache, as we observed earlier. However, in subsequent executions, the response time will decrease significantly. 
+
 ```
-time curl -X GET <Rota gerada para o microsserviço quarkus-infinispan-cache>/presentation/cache/1 && echo
+time curl -X GET <Generated route for the quarkus-infinispan-cache microservice>/presentation/cache/1 && echo
 ```
 
-O resultado deve ser algo aproximado a: *{"id":1,"author":"Ian Mesquita","theme":"Quarkus e Red Hat Data Grid","dateTime":"2025-02-07T16:00:00"}
+The result should be something close to: *{"id":1,"author":"Ian Mesquita","theme":"Quarkus and Red Hat Data Grid","dateTime":"2025-02-07T16:00:00"}
 real	0m0.548s
 user	0m0.016s
 sys	0m0.004s*.
 
-Agora estamos acessando o cache. 
+Now we are accessing the cache.
 
-Acesse o painel do Data Grid e veja que a entrada está registrada no cache com o TTL (Time to Live) de 1800 segundos, ou seja, 30 minutos.
+Go to the *Data Grid panel* and check that the entry has been recorded in the cache with a TTL (Time to Live) of 1800 seconds, which means 30 minutes.
 
-![Detalhes do cache presentation](/images/cache-populated.png)
+![Cache populated with the record](/images/cache-populated.png)
 
-Bom trabalho! Finalizamos nosso lab.
+Great job! We have completed our lab.
