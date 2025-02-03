@@ -2,6 +2,7 @@ apiVersion: infinispan.org/v1
 kind: Infinispan
 metadata:
   name: infinispan
+  namespace: remote-cache
 spec:
   replicas: 2
   service:
