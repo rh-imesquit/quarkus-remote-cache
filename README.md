@@ -14,6 +14,9 @@ Esse laboratório foi executado com as seguintes espeificações:
 
 Antes de começar, é necessário ter acesso ao OpenShift, pois todo o laboratório será realizado por meio dele. O usuário deverá estar devidamente autenticado.
 
+Faça o login pelo oc cli também.
+
+
 ## Provisionando a infraestrutura necessária
 
 Vamos começar criando dois projetos no OpenShift para criar uma camada de isolamento lógico entre as partes da nossa solução.
@@ -24,13 +27,14 @@ Vamos começar criando dois projetos no OpenShift para criar uma camada de isola
 
 Após criar esse projeto, vamos instalar o operator do Red Hat Data Grid. Na perspectiva Administrador, acesse o menu lateral esquerdo Operators e clique em OperatorHub. Na barra de busca, procure por Red Hat Data Grid.
 
-[Imagem operator DG]
+![Imagem operator Data Grid](/images/operator-data-grid.png)
 
 Mantenha as configurações padrão e clique no botão Install. Após finalizar a instalação, clique no botão View Operator para acessar a tela do operator.
 
-[Tela operator DG]
+![Imagem operator Data Grid](/images/operator-data-grid-details.png)
 
-Em seguida vamos criar as instâncias necessárias usando os yamls disponibilizados nesse repositório em * caminho *.
+
+Em seguida vamos criar as instâncias necessárias usando os yamls disponibilizados nesse repositório [aqui](/infra/openshift/data-grid/).
 
 OBS.: No arquivo infinispan.yaml deve ser usada a rota do host do cluster OpenShift. 
 
@@ -40,19 +44,19 @@ console-dg.apps.cluster-g6kn4.g6kn4.sandbox1680.opentlc.com
 
 Clique em Create Instance na opção Infinispan Cluster e cole o yaml correspondente (acesse aqui), e clique no botão Create.
 
-[Imagem infinispan yaml]
+![Definição de yaml do infinispan](/images/infinispan-yaml.png)
 
-Perceba que serão criados 3 pods para o cluster.
+Perceba que serão criados 2 pods para o cluster.
 
-[Imagem pods infinispan]
+![Pods do infinispan](/images/infinispan-pods.png)
 
 O mesmo deve ser feito para a opção Cache.Cole o yaml correspondente (acesse aqui), e clique no botão Create.
 
-[Imagem cache yaml]
+![Definição de yaml do cache](/images/cache-yaml.png)
 
 Repare que temos 3 caches criados. Esse comportamento é normal, pois os caches memcached-cache e resp-cache são criados automaticamente pelo cluster infinispan. O importante é que eles estejam com o status Ready.
 
-[Imagem cache]
+![Pods do cache](/images/cache-pods.png)
 
 Um ponto interessante é que será habilitada uma rota para acessar a console do Red Hat Data Grid. Vá para o menu lateral esquerdo e acesse Networking, e depois Routes. Por fim, clique no link Location da rota infinispan-external.
 
@@ -60,7 +64,10 @@ A console irá pedir o usuário e senha de acesso. Essas credenciais se encontra
 
 Após informar as credenciais corretamente, clique no botão Open the console.
 
-[Painel DG]
+![Tela de autenticação do Data Grid](/images/dg-console-auth.png)
+
+![Painel do Data Grid](/images/dg-console-panel.png)
+
 
 Finalizamos essa etapa.
 
