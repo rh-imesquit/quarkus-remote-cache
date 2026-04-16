@@ -2,7 +2,7 @@ package com.redhat.application.resource;
 
 import java.util.List;
 
-import com.redhat.application.service.PresentationService;
+import com.redhat.application.service.PresentationArrayService;
 import com.redhat.domain.model.Presentation;
 
 import jakarta.inject.Inject;
@@ -20,7 +20,7 @@ import jakarta.ws.rs.core.Response;
 @Path("/presentation")
 public class PresentationResource {
     @Inject
-    PresentationService service;
+    PresentationArrayService service;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
